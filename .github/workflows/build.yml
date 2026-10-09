@@ -21,6 +21,10 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
+# 允许工作流创建/更新 GitHub Release 和上传安装包
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -84,10 +88,17 @@ jobs:
             dist/latest*.yml
           if-no-files-found: error
 
-      # 只有推送 v* 标签时才创建 GitHub Release
+      # 推送 v* 标签时创建/更新 GitHub Release 并附加安装包。
+      # 兼容两种情况：Release 不存在则创建；已存在（如手动创建）则直接上传 assets。
       - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/**
-          generate_release_notes: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "${{ github.ref_name }}" >/dev/null 2>&1; then
+            echo "Release ${{ github.ref_name }} already exists, uploading assets"
+          else
+            gh release create "${{ github.ref_name }}" --generate-notes || true
+          fi
+          gh release upload "${{ github.ref_name }}" dist/* --clobber
