@@ -1,0 +1,36 @@
+# electron-builder 打包配置
+appId: com.f2elife.onetouchstart
+productName: OneTouchStart
+directories:
+  output: dist
+  buildResources: build
+
+# 打包进应用的源文件
+files:
+  - main.js
+  - preload.js
+  - index.html
+  - package.json
+
+# macOS：universal 包 = x64(Intel) + arm64(Apple Silicon) 合一
+mac:
+  category: public.app-category.utilities
+  target:
+    - target: dmg
+      arch:
+        - universal
+    - target: zip
+      arch:
+        - universal
+
+# Windows：NSIS 安装包（x64）
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true

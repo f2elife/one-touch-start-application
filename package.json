@@ -1,0 +1,27 @@
+{
+  "name": "one-touch-start-application",
+  "version": "1.0.0",
+  "description": "用于一键启动服务的程序",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac --universal",
+    "build:win": "electron-builder --win"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/f2elife/one-touch-start-application.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/f2elife/one-touch-start-application/issues"
+  },
+  "homepage": "https://github.com/f2elife/one-touch-start-application#readme",
+  "devDependencies": {
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3"
+  }
+}
