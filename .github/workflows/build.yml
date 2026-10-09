@@ -90,6 +90,8 @@ jobs:
 
       # 推送 v* 标签时创建/更新 GitHub Release 并附加安装包。
       # 兼容两种情况：Release 不存在则创建；已存在（如手动创建）则直接上传 assets。
+      # 注意：dist/ 下还有 mac-universal/、win-unpacked/ 等目录，
+      # 不能用 dist/* 直接传给 gh（会把目录当文件上传导致失败），必须只传文件。
       - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
@@ -101,4 +103,4 @@ jobs:
           else
             gh release create "${{ github.ref_name }}" --generate-notes || true
           fi
-          gh release upload "${{ github.ref_name }}" dist/* --clobber
+          find dist -maxdepth 1 -type f -print0 | xargs -0 -r gh release upload "${{ github.ref_name }}" --clobber
