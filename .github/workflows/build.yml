@@ -101,6 +101,9 @@ jobs:
           if gh release view "${{ github.ref_name }}" >/dev/null 2>&1; then
             echo "Release ${{ github.ref_name }} already exists, uploading assets"
           else
-            gh release create "${{ github.ref_name }}" --generate-notes || true
+            gh release create "${{ github.ref_name }}" --generate-notes --draft=false || true
           fi
+          # 兜底：确保 Release 处于已发布状态（删 tag 重推等操作可能把 Release 变成草稿）
+          gh release edit "${{ github.ref_name }}" --draft=false || true
+          # 只上传文件（dist 下还有 mac-universal/、win-unpacked/ 等目录，不能当文件传）
           find dist -maxdepth 1 -type f -print0 | xargs -0 -r gh release upload "${{ github.ref_name }}" --clobber
